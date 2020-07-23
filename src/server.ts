@@ -5,5 +5,4 @@ const porta = process.env.PORT || 3333;
 
 server.use(express.json());
 
-
 server.listen(porta);
