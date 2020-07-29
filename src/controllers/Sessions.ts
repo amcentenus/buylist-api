@@ -7,9 +7,14 @@ export default {
     try {
       const { UserName, Password } = req.body;
       const user = await UsersModel.findByUserName(UserName);
+      if (!user) {
+        return res.status(404).json({
+          message: 'Usuário não existente!'
+        });
+      }
       if (!user.testPassword(Password)) {
         return res.status(403).json({
-          error: 'User or password does not match'
+          message: 'Usuário ou senha inválidos!'
         });
       }
       return res.json({ Token: user.Token });
