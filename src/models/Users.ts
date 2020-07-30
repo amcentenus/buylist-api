@@ -72,6 +72,19 @@ class Users extends Model<UserAttributes, UserNewAttributes>
     }
   }
 
+  static async findDuplicateUserByLoginOrEmail(
+    _login: string, _email: string): Promise<Users> {
+    try {
+      const user = await Users.findOne({
+        where: {
+          [Op.or]: [{ Login: _login }, { Email: _email }]
+        }
+      });
+      return user;
+    } catch (err) {
+      return null;
+    }
+  }
 }
 
 Users.init({
