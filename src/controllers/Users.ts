@@ -17,5 +17,17 @@ export default {
     } catch (err) {
       return res.status(500).json({ error: err });
     }
+  },
+  async show(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+      const user = await UsersModel.findUserById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'Usuário não encontrado!' });
+      }
+      return res.json(user);
+    } catch (err) {
+      return res.status(500).json({ error: err });
+    }
   }
 };

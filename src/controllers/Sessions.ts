@@ -13,11 +13,12 @@ export default {
         });
       }
       if (!user.testPassword(Password)) {
-        return res.status(403).json({
+        return res.status(400).json({
           message: 'Usuário ou senha inválidos!'
         });
       }
-      return res.json({ Token: user.Token });
+      const { Id, Login, Name, Email, Token } = user;
+      return res.json({ Id, Login, Name, Email, Token });
     } catch (err) {
       return res.status(500).json({ error: err });
     }

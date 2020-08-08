@@ -16,3 +16,9 @@ export const sessionLogin = {
     Password: Joi.string().min(4).required(),
   })
 };
+
+export const showUser = {
+  params: Joi.object().keys({
+    id: Joi.string().required(),
+  })
+};

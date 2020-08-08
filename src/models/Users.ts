@@ -1,12 +1,13 @@
 import { Model, Optional, DataTypes, Op } from 'sequelize';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { uuid } from 'uuidv4';
 
 import dbConfig, { createdAt, updatedAt } from '../database';
 import authConfig from '@config/Auth';
 
 interface UserAttributes {
-  Id: number;
+  Id: string;
   Login: string;
   Name: string;
   Email: string;
@@ -20,7 +21,7 @@ type UserNewAttributes = Optional<UserAttributes, 'Id'>
 
 class Users extends Model<UserAttributes, UserNewAttributes>
   implements UserAttributes {
-  public Id!: number;
+  public Id!: string;
   public Login!: string;
   public Name!: string;
   public Email!: string;
@@ -49,7 +50,6 @@ class Users extends Model<UserAttributes, UserNewAttributes>
 
   public getToken(): string {
     try {
-      console.log(authConfig.ExpiresIn);
       return jwt.sign({ Id: this.Id }, authConfig.Secret, {
         expiresIn: authConfig.ExpiresIn,
       });
@@ -85,14 +85,24 @@ class Users extends Model<UserAttributes, UserNewAttributes>
       return null;
     }
   }
+
+  static async findUserById(_id: string): Promise<Users> {
+    try {
+      const user = await Users.findOne({
+        attributes: ['Login', 'Name', 'Email'],
+        where: { Id: _id }
+      });
+      return user;
+    } catch (err) {
+      return null;
+    }
+  }
 }
 
 Users.init({
   Id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    allowNull: false,
-    autoIncrement: true
   },
   Login: DataTypes.STRING,
   Name: DataTypes.STRING,
@@ -118,6 +128,7 @@ Users.init({
 });
 
 Users.beforeCreate(async (user) => {
+  user.Id = uuid();
   const hash = crypto.createHmac('sha512', user.Login);
   hash.update(user.Password);
   user.Hash = hash.digest('hex');
