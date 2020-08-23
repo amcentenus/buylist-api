@@ -40,7 +40,7 @@ class Users extends Model<UserAttributes, UserNewAttributes>
 
   public testPassword(_password: string): boolean {
     try {
-      const hash = crypto.createHmac('sha512', this.Login);
+      const hash = crypto.createHmac('sha512', this.Id);
       hash.update(_password);
       return this.Hash === hash.digest('hex');
     } catch (err) {
@@ -86,10 +86,10 @@ class Users extends Model<UserAttributes, UserNewAttributes>
     }
   }
 
-  static async findUserById(_id: string): Promise<Users> {
+  static async findUserById(_id: string, _attr?: string[]): Promise<Users> {
     try {
       const user = await Users.findOne({
-        attributes: ['Login', 'Name', 'Email'],
+        attributes: _attr,
         where: { Id: _id }
       });
       return user;
@@ -129,9 +129,17 @@ Users.init({
 
 Users.beforeCreate(async (user) => {
   user.Id = uuid();
-  const hash = crypto.createHmac('sha512', user.Login);
+  const hash = crypto.createHmac('sha512', user.Id);
   hash.update(user.Password);
   user.Hash = hash.digest('hex');
+});
+
+Users.beforeUpdate(async (user) => {
+  if (user.Password) {
+    const hash = crypto.createHmac('sha512', user.Id);
+    hash.update(user.Password);
+    user.Hash = hash.digest('hex');
+  }
 });
 
 export default Users;

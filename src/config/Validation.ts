@@ -22,3 +22,18 @@ export const showUser = {
     id: Joi.string().required(),
   })
 };
+
+export const updateUser = {
+  headers: Joi.object({
+    authorization: Joi.string().required()
+  }).unknown(),
+  body: Joi.object().keys({
+    Login: Joi.string(),
+    Name: Joi.string(),
+    Email: Joi.string().email(),
+    OldPassword: Joi.string(),
+    NewPassword: Joi.string(),
+    ConfirmNewPassword: Joi.ref('NewPassword'),
+    userID: Joi.string().required()
+  })
+};
