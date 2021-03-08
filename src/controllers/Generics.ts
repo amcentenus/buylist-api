@@ -1,8 +1,10 @@
-import { Request, Response } from 'express';
 import config from '../config';
 
+import IRequestResponseDTO from '@dtos/IRequestResponseDTO'
+import IResponseDTO from '@dtos/IResponseDTO'
+
 export default {
-  async index(req: Request, res: Response): Promise<Response> {
+  async index({req, res}: IRequestResponseDTO): Promise<IResponseDTO> {
     try {
       return res.json(config);
     } catch (err) {
