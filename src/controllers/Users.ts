@@ -1,8 +1,10 @@
-import { Request, Response } from 'express';
 import UsersModel from '@models/Users';
 
+import IRequestResponseDTO from '@dtos/IRequestResponseDTO'
+import IResponseDTO from '@dtos/IResponseDTO'
+
 export default {
-  async store(req: Request, res: Response): Promise<Response> {
+  async store({req, res}: IRequestResponseDTO): Promise<IResponseDTO> {
     try {
       const { Login: reqLogin, Email: reqEmail } = req.body;
       if (await UsersModel.findDuplicateUserByLoginOrEmail(
@@ -18,7 +20,7 @@ export default {
       return res.status(500).json({ error: err });
     }
   },
-  async show(req: Request, res: Response): Promise<Response> {
+  async show({req, res}: IRequestResponseDTO): Promise<IResponseDTO> {
     try {
       const { id } = req.params;
       const user = await UsersModel.findUserById(id, ['Login', 'Name', 'Email']);
@@ -30,7 +32,7 @@ export default {
       return res.status(500).json({ error: err });
     }
   },
-  async update(req: Request, res: Response): Promise<Response> {
+  async update({req, res}: IRequestResponseDTO): Promise<IResponseDTO> {
     try {
 
       const {

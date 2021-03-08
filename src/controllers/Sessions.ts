@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
-
 import UsersModel from '@models/Users';
 
+import IRequestResponseDTO from '@dtos/IRequestResponseDTO'
+import IResponseDTO from '@dtos/IResponseDTO'
+
 export default {
-  async store(req: Request, res: Response): Promise<Response> {
+  async store({req, res}: IRequestResponseDTO): Promise<IResponseDTO> {
     try {
       const { UserName, Password } = req.body;
       const user = await UsersModel.findByUserName(UserName);
